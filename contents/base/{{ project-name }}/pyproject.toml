@@ -1,0 +1,51 @@
+[project]
+name = "{{ project-name }}"
+version = "0.1.0"
+description = "{{ PrefixName }}{{ SuffixName }} gRPC service"
+requires-python = ">=3.12"
+dependencies = [
+    "grpcio>=1.70",
+    "grpcio-health-checking>=1.70",
+    "grpcio-reflection>=1.70",
+    "protobuf>=5.29",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.34",
+    "pydantic-settings>=2.7",
+    "structlog>=24.4",
+    "prometheus-client>=0.21",
+    "opentelemetry-sdk>=1.29",
+    "opentelemetry-exporter-otlp>=1.29",
+{% if persistence ~= 'None' %}{% if persistence == 'PostgreSQL' %}    "sqlalchemy[asyncio]>=2.0",
+    "asyncpg>=0.30",
+    "alembic>=1.14",
+{% endif %}{% if persistence == 'MySQL' %}    "sqlalchemy[asyncio]>=2.0",
+    "aiomysql>=0.2",
+    "alembic>=1.14",
+{% endif %}{% endif %}{% if cache ~= 'None' %}    "redis[asyncio]>=5.2",
+{% endif %}{% if messaging == 'Kafka' %}    "aiokafka>=0.11",
+{% endif %}{% if messaging == 'Pulsar' %}    "pulsar-client>=3.5",
+{% endif %}{% if has_s3 %}    "aiobotocore[boto3]>=2.15",
+{% endif %}{% if has_azure_blob %}    "azure-storage-blob>=12.23",
+{% endif %}]
+
+[project.scripts]
+{{ project-name }} = "{{ prefix_name }}_{{ suffix_name }}.main:main"
+
+[dependency-groups]
+dev = [
+    "grpcio-tools>=1.70",
+    "pytest>=8",
+    "pytest-asyncio>=0.24",
+    "httpx>=0.28",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/{{ prefix_name }}_{{ suffix_name }}"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

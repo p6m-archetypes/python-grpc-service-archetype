@@ -1,0 +1,79 @@
+description: "Python gRPC service using grpcio and FastAPI management sidecar"
+authors:
+  - "p6m"
+requires:
+  archetect: ">=3.0.0"
+
+templating:
+  trim_blocks: true
+  lstrip_blocks: true
+
+catalog:
+  author:
+    source: "../../../personal/archetect-common/author-prompts-library"
+    library: true
+    show: false
+  org:
+    source: "../../../personal/archetect-common/org-prompts-library"
+    library: true
+    show: false
+  project:
+    source: "../../../personal/archetect-common/project-prompts-library"
+    library: true
+    show: false
+  editor-config:
+    source: "../../../personal/archetect-common/editor-config-library"
+    library: true
+    show: false
+  gitignore:
+    source: "../../../personal/archetect-common/gitignore-library"
+    library: true
+    show: false
+  scm:
+    source: "../../../personal/archetect-common/scm-library"
+    library: true
+    show: false
+  ports:
+    source: "../../../personal/archetect-common/ports-library"
+    library: true
+    show: false
+  archiver:
+    source: "../../../personal/archetect-common/archive-library"
+    library: true
+    show: false
+  platform-application-manifests:
+    source: "../platform-application-manifests-library"
+    library: true
+    show: false
+  python-ci:
+    source: "../python-ci-library"
+    library: true
+    show: false
+  python-resource-postgresql:
+    source: "../python-resource-postgresql-library"
+    library: true
+    show: false
+  python-resource-mysql:
+    source: "../python-resource-mysql-library"
+    library: true
+    show: false
+  python-resource-redis:
+    source: "../python-resource-redis-library"
+    library: true
+    show: false
+  python-resource-kafka:
+    source: "../python-resource-kafka-library"
+    library: true
+    show: false
+  python-resource-pulsar:
+    source: "../python-resource-pulsar-library"
+    library: true
+    show: false
+  python-resource-s3:
+    source: "../python-resource-s3-library"
+    library: true
+    show: false
+  python-resource-azure-blob:
+    source: "../python-resource-azure-blob-library"
+    library: true
+    show: false
