@@ -7,11 +7,12 @@ from .settings import settings
 async def serve(settings) -> None:
     # Import generated proto code inside function — run 'make proto' to generate first
     from . import (  # type: ignore[reportMissingModuleSource]
+        {{ prefix_name }}_{{ suffix_name }}_pb2 as pb2_module,
         {{ prefix_name }}_{{ suffix_name }}_pb2_grpc as grpc_module,
     )
 
     from grpc_health.v1 import health, health_pb2_grpc
-    from grpc_reflection.v1alpha import reflection, reflection_pb2
+    from grpc_reflection.v1alpha import reflection
 
     servicer = {{ PrefixName }}{{ SuffixName }}Servicer()
     server = grpc.aio.server()
@@ -21,8 +22,8 @@ async def serve(settings) -> None:
     health_pb2_grpc.add_HealthServicer_to_server(health_servicer, server)
 
     service_names = (
-        grpc_module.{{ PrefixName }}{{ SuffixName }}.DESCRIPTOR.services_by_name["{{ PrefixName }}{{ SuffixName }}"].full_name,
-        reflection_pb2.ServerReflection.DESCRIPTOR.services_by_name["ServerReflection"].full_name,
+        pb2_module.DESCRIPTOR.services_by_name["{{ PrefixName }}{{ SuffixName }}"].full_name,
+        reflection.SERVICE_NAME,
     )
     reflection.enable_server_reflection(service_names, server)
 
