@@ -19,4 +19,7 @@ jobs:
           enable-cache: false
       - uses: prova-rs/run-action@v1
         with:
+          # Pin the prova release: the action's default (v0.1.1) has no published release yet
+          # (latest is v0.1.0), so the default 404s while downloading the prova binary.
+          version: v0.1.0
           profile: ci
