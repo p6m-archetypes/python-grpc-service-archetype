@@ -7,7 +7,7 @@ from .settings import settings
 async def serve(settings) -> None:
     # Import generated proto code inside function — run 'make proto' to generate first
     from . import (  # type: ignore[reportMissingModuleSource]
-        {{ prefix_name }}_{{ suffix_name }}_pb2 as pb2,
+        {{ prefix_name }}_{{ suffix_name }}_pb2 as pb2_module,
         {{ prefix_name }}_{{ suffix_name }}_pb2_grpc as grpc_module,
     )
 
@@ -22,8 +22,7 @@ async def serve(settings) -> None:
     health_pb2_grpc.add_HealthServicer_to_server(health_servicer, server)
 
     service_names = (
-        pb2.DESCRIPTOR.services_by_name["{{ PrefixName }}{{ SuffixName }}"].full_name,
-        health.SERVICE_NAME,
+        pb2_module.DESCRIPTOR.services_by_name["{{ PrefixName }}{{ SuffixName }}"].full_name,
         reflection.SERVICE_NAME,
     )
     reflection.enable_server_reflection(service_names, server)

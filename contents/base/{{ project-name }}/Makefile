@@ -10,7 +10,10 @@ proto:
 		--grpc_python_out=src/{{ prefix_name }}_{{ suffix_name }} \
 		--proto_path=proto \
 		proto/{{ prefix_name }}_{{ suffix_name }}.proto
-	sed -i.bak 's/^import {{ prefix_name }}_{{ suffix_name }}_pb2/from . import {{ prefix_name }}_{{ suffix_name }}_pb2/' \
+	# grpc_tools emits a top-level `import {{ prefix_name }}_{{ suffix_name }}_pb2`,
+	# which fails when the stubs are imported as package submodules. Rewrite it
+	# to a package-relative import so `from . import ..._pb2_grpc` works.
+	sed -i.bak 's/^import {{ prefix_name }}_{{ suffix_name }}_pb2 /from . import {{ prefix_name }}_{{ suffix_name }}_pb2 /' \
 		src/{{ prefix_name }}_{{ suffix_name }}/{{ prefix_name }}_{{ suffix_name }}_pb2_grpc.py
 	rm -f src/{{ prefix_name }}_{{ suffix_name }}/{{ prefix_name }}_{{ suffix_name }}_pb2_grpc.py.bak
 
