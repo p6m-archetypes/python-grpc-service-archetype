@@ -1,0 +1,22 @@
+name: Acceptance
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        # The live tier boots the service via `uv run`; its uv supervisor can outlive prova's
+        # teardown and hold the shared cache lock, which deadlocks the post-run `uv cache prune`.
+        # Acceptance runs are infrequent, so skip the shared cache to avoid that lock contention.
+        with:
+          enable-cache: false
+      - uses: prova-rs/run-action@v1
+        with:
+          profile: ci
