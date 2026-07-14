@@ -10,70 +10,70 @@ templating:
 
 catalog:
   author:
-    source: "../../../personal/archetect-common/author-prompts-library"
+    source: "https://github.com/archetect-common/author-prompts-library.git"
     library: true
     show: false
   org:
-    source: "../../../personal/archetect-common/org-prompts-library"
+    source: "https://github.com/archetect-common/org-prompts-library.git"
     library: true
     show: false
   project:
-    source: "../../../personal/archetect-common/project-prompts-library"
+    source: "https://github.com/archetect-common/project-prompts-library.git"
     library: true
     show: false
   editor-config:
-    source: "../../../personal/archetect-common/editor-config-library"
+    source: "https://github.com/archetect-common/editor-config-library.git"
     library: true
     show: false
   gitignore:
-    source: "../../../personal/archetect-common/gitignore-library"
+    source: "https://github.com/archetect-common/gitignore-library.git"
     library: true
     show: false
   scm:
-    source: "../../../personal/archetect-common/scm-library"
+    source: "https://github.com/archetect-common/scm-library.git"
     library: true
     show: false
   ports:
-    source: "../../../personal/archetect-common/ports-library"
+    source: "https://github.com/archetect-common/ports-library.git"
     library: true
     show: false
   archiver:
-    source: "../../../personal/archetect-common/archive-library"
+    source: "https://github.com/archetect-common/archive-library.git"
     library: true
     show: false
   platform-application-manifests:
-    source: "../platform-application-manifests-library"
+    source: "https://github.com/p6m-archetypes/platform-application-manifests-library.git#dev"
     library: true
     show: false
   python-ci:
-    source: "../python-ci-library"
+    source: "https://github.com/p6m-archetypes/python-ci-library.git#dev"
     library: true
     show: false
   python-resource-postgresql:
-    source: "../python-resource-postgresql-library"
+    source: "https://github.com/p6m-archetypes/python-resource-postgresql-library.git#dev"
     library: true
     show: false
   python-resource-mysql:
-    source: "../python-resource-mysql-library"
+    source: "https://github.com/p6m-archetypes/python-resource-mysql-library.git#dev"
     library: true
     show: false
   python-resource-redis:
-    source: "../python-resource-redis-library"
+    source: "https://github.com/p6m-archetypes/python-resource-redis-library.git#dev"
     library: true
     show: false
   python-resource-kafka:
-    source: "../python-resource-kafka-library"
+    source: "https://github.com/p6m-archetypes/python-resource-kafka-library.git#dev"
     library: true
     show: false
   python-resource-pulsar:
-    source: "../python-resource-pulsar-library"
+    source: "https://github.com/p6m-archetypes/python-resource-pulsar-library.git#dev"
     library: true
     show: false
   python-resource-s3:
-    source: "../python-resource-s3-library"
+    source: "https://github.com/p6m-archetypes/python-resource-s3-library.git#dev"
     library: true
     show: false
   python-resource-azure-blob:
-    source: "../python-resource-azure-blob-library"
+    source: "https://github.com/p6m-archetypes/python-resource-azure-blob-library.git#dev"
     library: true
     show: false
