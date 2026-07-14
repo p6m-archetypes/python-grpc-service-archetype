@@ -32,6 +32,12 @@ local ANSWERS = {
 local PROJECT_DIR = "example-service"
 local SVC = "example_service.ExampleService"
 
+-- Connect a reflection-based gRPC client. Released prova exposes this as `grpc.client`; newer
+-- builds renamed it to `grpc.connect`. Resolve whichever the runtime provides.
+local function grpc_connect(addr)
+  return (grpc.connect or grpc.client)(addr)
+end
+
 local EXPECTED_FILES = {
   "pyproject.toml",
   ".python-version",
@@ -154,7 +160,7 @@ prova.group("python-grpc endpoints", { requires = { "uv", "make" } }, function(g
   g:test("server reflection exposes the service and stub RPCs answer UNIMPLEMENTED", function(t)
     local svc = t:use(service)
     -- grpc.connect performs reflection to discover the schema - success means it is enabled.
-    local client = grpc.connect(svc.addr)
+    local client = grpc_connect(svc.addr)
     -- The default config leaves the handlers as UNIMPLEMENTED stubs.
     local res = client:call_status(SVC .. "/CreateExample", { display_name = "widget" })
     t:expect(res.ok, "stub RPC does not succeed"):is_falsy()
@@ -163,7 +169,7 @@ prova.group("python-grpc endpoints", { requires = { "uv", "make" } }, function(g
 
   g:test("the gRPC health service reports SERVING", function(t)
     local svc = t:use(service)
-    local client = grpc.connect(svc.addr)
+    local client = grpc_connect(svc.addr)
     local health = client:call("grpc.health.v1.Health/Check", {})
     t:expect(health.status, "overall health status"):equals("SERVING")
   end)
