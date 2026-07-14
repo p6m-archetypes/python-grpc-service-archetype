@@ -1,5 +1,9 @@
 .PHONY: proto test run
 
+# `proto` regenerates the gRPC stubs from the .proto definition. grpc_tools emits a
+# top-level `import <pkg>_pb2` in *_pb2_grpc.py; the sed step rewrites it to a
+# package-relative import so the stub resolves when loaded as a submodule of the
+# service package (otherwise the server fails to start with ModuleNotFoundError).
 proto:
 	uv run python -m grpc_tools.protoc \
 		--python_out=src/{{ prefix_name }}_{{ suffix_name }} \
