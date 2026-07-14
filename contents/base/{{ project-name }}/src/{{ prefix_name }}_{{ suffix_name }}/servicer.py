@@ -23,6 +23,7 @@ async def serve(settings) -> None:
 
     service_names = (
         pb2_module.DESCRIPTOR.services_by_name["{{ PrefixName }}{{ SuffixName }}"].full_name,
+        health.SERVICE_NAME,
         reflection.SERVICE_NAME,
     )
     reflection.enable_server_reflection(service_names, server)
