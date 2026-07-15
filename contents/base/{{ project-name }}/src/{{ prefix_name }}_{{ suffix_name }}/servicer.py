@@ -1,5 +1,7 @@
 import grpc
+{% if persistence == 'None' %}
 from grpc import ServicerContext
+{% endif %}
 
 from .settings import settings
 
@@ -14,7 +16,15 @@ async def serve(settings) -> None:
     from grpc_health.v1 import health, health_pb2_grpc
     from grpc_reflection.v1alpha import reflection
 
+{% if persistence ~= 'None' %}
+    # Sample scaffold: CRUD handlers persisted through the persistence resource
+    # (services/items.py over domain/items.py). Replace as your real domain lands.
+    from .services.items import Persisted{{ PrefixName }}{{ SuffixName }}Servicer
+
+    servicer = Persisted{{ PrefixName }}{{ SuffixName }}Servicer()
+{% else %}
     servicer = {{ PrefixName }}{{ SuffixName }}Servicer()
+{% endif %}
     server = grpc.aio.server()
     grpc_module.add_{{ PrefixName }}{{ SuffixName }}Servicer_to_server(servicer, server)
 
@@ -34,7 +44,10 @@ async def serve(settings) -> None:
     await server.wait_for_termination()
 
 
+{% if persistence == 'None' %}
 class {{ PrefixName }}{{ SuffixName }}Servicer:
+    """UNIMPLEMENTED stubs — select a persistence option to render the persisted CRUD scaffold."""
+
     async def Create{{ PrefixName }}(self, request, context: ServicerContext):
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details("Not implemented")
@@ -54,10 +67,14 @@ class {{ PrefixName }}{{ SuffixName }}Servicer:
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details("Not implemented")
         raise NotImplementedError
-{% if persistence ~= 'None' %}
-    # Access database via: from .persistence import get_session
-{% endif %}{% if cache ~= 'None' %}
+
+    async def Delete{{ PrefixName }}(self, request, context: ServicerContext):
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details("Not implemented")
+        raise NotImplementedError
+{% if cache ~= 'None' %}
     # Access cache via: from .cache import get_cache
 {% endif %}{% if messaging ~= 'None' %}
     # Access messaging via: from .messaging import get_producer
+{% endif %}
 {% endif %}

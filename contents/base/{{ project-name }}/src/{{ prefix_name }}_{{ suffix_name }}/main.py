@@ -52,6 +52,13 @@ async def run() -> None:
 {% if persistence ~= 'None' %}
     from .persistence import init_db, close_db
     await init_db(settings)
+
+    # Sample scaffold: importing the domain module registers its entities on the
+    # persistence Base; ensure_schema creates any missing tables. Replace with
+    # real migrations (alembic) as the domain solidifies.
+    from .domain import items  # noqa: F401
+    from .persistence import ensure_schema
+    await ensure_schema()
 {% endif %}
 {% if cache ~= 'None' %}
     from .cache import init_cache, close_cache

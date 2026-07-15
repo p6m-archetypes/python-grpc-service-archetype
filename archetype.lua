@@ -78,6 +78,12 @@ elseif context:get("persistence") == "MySQL" then
     require("python-resource-mysql").render(context, dest)
 end
 
+-- Sample scaffold entity + persisted gRPC CRUD servicer over the persistence resource
+-- (wired into servicer.serve and main.run behind the persistence conditionals).
+if context:get("has_persistence") then
+    directory.render("contents/persistence", context)
+end
+
 if context:get("has_cache") then
     require("python-resource-redis").render(context, dest)
 end
