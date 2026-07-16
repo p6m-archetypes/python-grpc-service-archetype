@@ -91,8 +91,7 @@ end)
 -- groups, so `uv` is guaranteed present here.
 local installed = prova.fixture("python-grpc:installed", Scope.Suite, function(ctx)
   local root = ctx:use(project)
-  local sync = shell.run("uv sync --group dev", { cwd = root.path, timeout = "300s" })
-  assert(sync:ok(), "uv sync failed:\n" .. sync.stderr .. sync.stdout)
+  shell.run("uv sync --group dev", { cwd = root.path, timeout = "300s", check = true })
   return root
 end)
 
@@ -102,16 +101,15 @@ end)
 local service = prova.fixture("python-grpc:service", Scope.Suite, function(ctx)
   local root = ctx:use(installed)
 
-  local proto = shell.run("make proto", { cwd = root.path, timeout = "180s" })
-  assert(proto:ok(), "make proto failed:\n" .. proto.stderr .. proto.stdout)
+  shell.run("make proto", { cwd = root.path, timeout = "180s", check = true })
 
   local port, mgmt = net.free_port(), net.free_port()
   ctx:manage(shell.spawn("uv run " .. PROJECT_DIR, {
     cwd = root.path,
     env = {
       HOST            = "127.0.0.1",
-      PORT            = tostring(port),
-      MANAGEMENT_PORT = tostring(mgmt),
+      PORT            = port,
+      MANAGEMENT_PORT = mgmt,
     },
   }))
 
@@ -284,11 +282,9 @@ for _, v in ipairs(VARIANTS) do
     local root = ctx:use(variant_project):dir(PROJECT_DIR)
     local db = v.db.container(ctx)
 
-    local sync = shell.run("uv sync --group dev", { cwd = root.path, timeout = "300s" })
-    assert(sync:ok(), label .. " uv sync failed:\n" .. sync.stderr .. sync.stdout)
+    shell.run("uv sync --group dev", { cwd = root.path, timeout = "300s", check = true })
 
-    local proto = shell.run("make proto", { cwd = root.path, timeout = "180s" })
-    assert(proto:ok(), label .. " make proto failed:\n" .. proto.stderr .. proto.stdout)
+    shell.run("make proto", { cwd = root.path, timeout = "180s", check = true })
 
     local port, mgmt = net.free_port(), net.free_port()
     ctx:manage(shell.spawn("uv run " .. PROJECT_DIR, {
@@ -296,10 +292,10 @@ for _, v in ipairs(VARIANTS) do
       env = {
         -- pydantic-settings binds UPPER_SNAKE env vars onto the Settings fields.
         HOST            = "127.0.0.1",
-        PORT            = tostring(port),
-        MANAGEMENT_PORT = tostring(mgmt),
-        DB_HOST         = "127.0.0.1",
-        DB_PORT         = tostring(db.container:host_port(v.db_port)),
+        PORT            = port,
+        MANAGEMENT_PORT = mgmt,
+        DB_HOST         = db.host,
+        DB_PORT         = db.port,
         DB_USERNAME     = "prova",
         DB_PASSWORD     = "prova",
         DB_DBNAME       = "prova",
