@@ -4,8 +4,11 @@
 --- The BEHAVIORAL bar — CRUD through the production image (which runs the protoc codegen), the
 --- platform env contract, health/metrics/structured logs, both name shapes — lives in
 --- tests/standards_test.lua (the shared p6m standards suite), fully containerized: docker is the
---- only requirement. The `build_steps` here are gated on host `uv` and skip cleanly where it's
---- absent.
+--- only requirement. No host toolchain is invoked here either (S8b): compile coverage is
+--- containerized — the standards SUT builds each persistence variant's production image, and the
+--- hollow (None) rendering is proven by a docker-gated `docker.build` of its production
+--- Dockerfile below. The rendered project's own unit tests belong to the rendered project's CI,
+--- not to this suite.
 ---
 --- Run from the archetype repo root (uses ./prova.toml):   prova
 
@@ -74,16 +77,21 @@ for _, persistence in ipairs({ "PostgreSQL", "MySQL" }) do
       ".platform/docker/prd/Dockerfile",
     },
     yaml_globs = { ".platform/kubernetes/**/*.yaml" },
-    requires = { "uv" },
-    build_steps = { "uv sync --group dev", "uv run pytest -q" },
   })
 end
 
 -- The hollow rendering stays hollow: no persistence, no scaffold files.
-archetect.verify{
+local none_project = prova.fixture("python-grpc[None]:project", Scope.File, function(ctx)
+  return archetect.render{
+    source = SRC,
+    answers = answers_with{ persistence = "None" },
+    destination = ctx:tempdir(),
+    defaults = true,
+  }
+end)
+
+archetect.verify(none_project, {
   name = "python-grpc[None]",
-  source = SRC,
-  answers = answers_with{ persistence = "None" },
   project_dir = PROJECT_DIR,
   expected_files = {
     "pyproject.toml",
@@ -94,6 +102,18 @@ archetect.verify{
   },
   absent_files = SCAFFOLD_FILES,
   yaml_globs = { ".platform/kubernetes/**/*.yaml" },
-  requires = { "uv" },
-  build_steps = { "uv sync --group dev", "uv run pytest -q" },
-}
+})
+
+-- Containerized compile proof for the hollow variant (S8b): the persistence variants compile
+-- inside the standards SUT image builds; None never boots there, so prove it compiles (protoc
+-- codegen included) by building its production image — build success IS the compile check.
+prova.group("python-grpc[None]:image", { requires = { "docker" } }, function(g)
+  g:test("production image builds from a clean render", function(t)
+    local root = t:use(none_project):dir(PROJECT_DIR)
+    local image = docker.build{
+      context = root.path,
+      dockerfile = ".platform/docker/prd/Dockerfile",
+    }
+    t:expect(image, "built image"):never():is_nil()
+  end)
+end)
