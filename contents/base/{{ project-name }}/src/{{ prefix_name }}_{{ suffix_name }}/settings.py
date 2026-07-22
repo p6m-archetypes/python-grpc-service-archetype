@@ -1,9 +1,14 @@
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     host: str = "0.0.0.0"
-    port: int = {{ service_port }}
+    # The platform injects GRPC_PORT (PAO env contract); PORT stays honored for local runs.
+    port: int = Field(
+        default={{ service_port }},
+        validation_alias=AliasChoices("grpc_port", "port"),
+    )
     management_port: int = {{ management_port }}
     log_level: str = "INFO"
     logging_structured: bool = False

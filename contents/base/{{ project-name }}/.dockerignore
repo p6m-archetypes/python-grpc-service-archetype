@@ -1,0 +1,11 @@
+# Keep host state out of the image build context (S8): virtualenvs, bytecode caches, and
+# host-generated proto stubs' backups from a local `make proto` would bloat the context and can
+# shadow the in-image install.
+.venv/
+**/__pycache__/
+*.pyc
+*.bak
+.pytest_cache/
+.git/
+.platform/
+*.md

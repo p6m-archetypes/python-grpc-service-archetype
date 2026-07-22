@@ -1,13 +1,16 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.responses import JSONResponse
-from prometheus_client import make_asgi_app
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
 management_app = FastAPI(title="{{ PrefixName }}{{ SuffixName }} Management")
 
-# Mount Prometheus metrics endpoint
-metrics_app = make_asgi_app()
-management_app.mount("/metrics", metrics_app)
+
+# Prometheus metrics endpoint — an explicit route so `GET /metrics` answers 200 directly
+# (mounting an ASGI sub-app 307-redirects the slashless path, which probes don't follow).
+@management_app.get("/metrics")
+async def metrics() -> Response:
+    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 
 @management_app.get("/health/readiness")

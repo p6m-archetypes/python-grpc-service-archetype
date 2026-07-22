@@ -1,27 +1,31 @@
 FROM python:3.12-slim AS builder
 WORKDIR /app
 
-# Install build dependencies including protobuf compiler for gRPC code generation
+# Install build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
-    protobuf-compiler \
     && rm -rf /var/lib/apt/lists/*
 
 # Install pip and uv
 RUN pip install --no-cache-dir uv
 
-# Copy project definition and install dependencies (including grpcio-tools for proto generation)
+# Generate the gRPC stubs into the package before installing it (grpc_tools bundles protoc).
+# The sed mirrors the Makefile's rewrite to a package-relative import: raw codegen emits a
+# top-level `import ..._pb2` that fails once the stubs load as package submodules.
 COPY pyproject.toml ./
-RUN uv pip install --system --no-cache -e ".[dev]"
-
-# Generate gRPC stubs from proto files
 COPY proto/ ./proto/
 COPY src/ ./src/
-RUN python -m grpc_tools.protoc \
+RUN uv pip install --system --no-cache grpcio-tools && \
+    python -m grpc_tools.protoc \
     -I proto \
     --python_out=src/{{ prefix_name }}_{{ suffix_name }} \
     --grpc_python_out=src/{{ prefix_name }}_{{ suffix_name }} \
-    proto/{{ prefix_name }}_{{ suffix_name }}.proto
+    proto/{{ prefix_name }}_{{ suffix_name }}.proto && \
+    sed -i 's/^import {{ prefix_name }}_{{ suffix_name }}_pb2 /from . import {{ prefix_name }}_{{ suffix_name }}_pb2 /' \
+    src/{{ prefix_name }}_{{ suffix_name }}/{{ prefix_name }}_{{ suffix_name }}_pb2_grpc.py
+
+# Install the package with the generated stubs baked in
+RUN uv pip install --system --no-cache .
 
 FROM python:3.12-slim
 WORKDIR /app

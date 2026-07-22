@@ -151,9 +151,11 @@ prova.group("python-grpc layout", function(g)
     -- The servicer implements that service.
     t:expect(fs.read(root .. "/src/example_service/servicer.py"), "servicer class")
       :contains("ExampleServiceServicer")
-    -- service-port + derived management-port land in settings.
+    -- service-port + derived management-port land in settings; the service port binds the
+    -- platform's GRPC_PORT (with PORT still honored).
     local settings = fs.read(root .. "/src/example_service/settings.py")
-    t:expect(settings, "service port"):contains("port: int = 8080")
+    t:expect(settings, "service port default"):contains("default=8080")
+    t:expect(settings, "platform GRPC_PORT alias"):contains("grpc_port")
     t:expect(settings, "management port"):contains("management_port: int = 8081")
   end)
 
@@ -218,8 +220,8 @@ prova.group("python-grpc endpoints", { requires = { "uv", "make" } }, function(g
 
   g:test("the management sidecar exposes Prometheus metrics", function(t)
     local svc = t:use(service)
-    -- /metrics 307-redirects to /metrics/; hit the canonical path directly.
-    local r = http.get(svc.mgmt_url .. "/metrics/")
+    -- An explicit route: GET /metrics answers 200 directly (no trailing-slash redirect).
+    local r = http.get(svc.mgmt_url .. "/metrics")
     t:expect(r.status, "metrics status code"):equals(200)
     t:expect(r.body, "Prometheus exposition format"):contains("# HELP")
   end)
