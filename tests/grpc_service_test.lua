@@ -12,6 +12,8 @@
 ---
 --- Run from the archetype repo root (uses ./prova.toml):   prova
 
+local p6m = require("p6m")
+
 local SRC = "."
 
 -- prefix Example / suffix Service => project dir `example-service`, package `example_service`,
@@ -116,4 +118,16 @@ prova.group("python-grpc[None]:image", { requires = { "docker" } }, function(g)
     }
     t:expect(image, "built image"):never():is_nil()
   end)
+end)
+
+-- CI parity (S10): the rendered project's own Build workflow path — python-uv-setup/
+-- python-uv-build's exact command sequence on a fresh clone, in the toolchain image. The
+-- Dockerfile and CI are two independent build paths; S10 holds the second. The hollow render
+-- suffices: resource variants change dependencies, not the command path.
+prova.group("python-grpc[None]:ci", { requires = { "docker" }, tags = { "standards" } }, function(g)
+  p6m.standards.ci_parity(g, none_project, {
+    stack = "python",
+    project_dir = "example-service",
+    name = "python-grpc",
+  })
 end)
