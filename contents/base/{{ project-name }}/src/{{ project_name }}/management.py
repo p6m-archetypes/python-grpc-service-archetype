@@ -3,7 +3,7 @@ from fastapi import FastAPI, Response
 from fastapi.responses import JSONResponse
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
-management_app = FastAPI(title="{{ PrefixName }}{{ SuffixName }} Management")
+management_app = FastAPI(title="{{ ProjectName }} Management")
 
 
 # Prometheus metrics endpoint — an explicit route so `GET /metrics` answers 200 directly

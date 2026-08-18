@@ -18,11 +18,11 @@ COPY src/ ./src/
 RUN uv pip install --system --no-cache grpcio-tools && \
     python -m grpc_tools.protoc \
     -I proto \
-    --python_out=src/{{ prefix_name }}_{{ suffix_name }} \
-    --grpc_python_out=src/{{ prefix_name }}_{{ suffix_name }} \
-    proto/{{ prefix_name }}_{{ suffix_name }}.proto && \
-    sed -i 's/^import {{ prefix_name }}_{{ suffix_name }}_pb2 /from . import {{ prefix_name }}_{{ suffix_name }}_pb2 /' \
-    src/{{ prefix_name }}_{{ suffix_name }}/{{ prefix_name }}_{{ suffix_name }}_pb2_grpc.py
+    --python_out=src/{{ project_name }} \
+    --grpc_python_out=src/{{ project_name }} \
+    proto/{{ project_name }}.proto && \
+    sed -i 's/^import {{ project_name }}_pb2 /from . import {{ project_name }}_pb2 /' \
+    src/{{ project_name }}/{{ project_name }}_pb2_grpc.py
 
 # Install the package with the generated stubs baked in
 RUN uv pip install --system --no-cache .
