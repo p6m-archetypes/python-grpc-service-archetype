@@ -19,7 +19,7 @@ async def serve(settings) -> None:
 {% if persistence ~= 'None' %}
     # Sample scaffold: CRUD handlers persisted through the persistence resource
     # (services/items.py over domain/items.py). Replace as your real domain lands.
-    from .services.items import Persisted{{ ProjectName }}Servicer
+    from .services.{{ entity_name }}s import Persisted{{ ProjectName }}Servicer
 
     servicer = Persisted{{ ProjectName }}Servicer()
 {% else %}

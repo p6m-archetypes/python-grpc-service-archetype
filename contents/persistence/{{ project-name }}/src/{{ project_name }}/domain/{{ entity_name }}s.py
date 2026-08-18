@@ -8,8 +8,8 @@ from ..persistence.models import Base
 
 # Sample scaffold entity proving the persistence round trip end-to-end.
 # Replace with your real domain model (and rename the handlers in services/items.py to match).
-class Item(Base):
-    __tablename__ = "items"
+class {{ EntityName }}(Base):
+    __tablename__ = "{{ entity_name }}s"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
     display_name: Mapped[str] = mapped_column(String(255), nullable=False)

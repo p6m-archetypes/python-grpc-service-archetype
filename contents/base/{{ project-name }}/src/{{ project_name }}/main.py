@@ -56,7 +56,7 @@ async def run() -> None:
     # Sample scaffold: importing the domain module registers its entities on the
     # persistence Base; ensure_schema creates any missing tables. Replace with
     # real migrations (alembic) as the domain solidifies.
-    from .domain import items  # noqa: F401
+    from .domain import {{ entity_name }}s  # noqa: F401
     from .persistence import ensure_schema
     await ensure_schema()
 {% endif %}
