@@ -11,11 +11,11 @@ from ..domain.{{ entity_name }}s import {{ EntityName }}Entity
 from ..persistence import get_session
 
 
-def _to_message(item: {{ EntityName }}) -> pb2.{{ EntityName }}:
-    return pb2.{{ EntityName }}Entity(id=item.id, display_name=item.display_name)
+def _to_message(item: {{ EntityName }}Entity) -> pb2.{{ EntityName }}:
+    return pb2.{{ EntityName }}(id=item.id, display_name=item.display_name)
 
 
-# Sample scaffold servicer: CRUD over the persisted {{ EntityName }} entity (domain/items.py) —
+# Sample scaffold servicer: CRUD over the persisted {{ EntityName }} entity (domain/{{ entity_name }}s.py) —
 # the round trip a black-box test can prove end-to-end. Replace these handlers
 # (and the RPCs in proto/{{ project_name }}.proto) as your real domain lands.
 class Persisted{{ ProjectName }}Servicer:
