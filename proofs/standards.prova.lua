@@ -68,6 +68,9 @@ local archetype_spec = p6m.spec{
 
 prova.group("python-grpc: the archetype itself", function(g)
   p6m.standards.prompt_surface(g, archetype_spec, { resources = { "python-resource-postgresql", "python-resource-mysql", "python-resource-redis", "python-resource-kafka", "python-resource-pulsar", "python-resource-s3", "python-resource-azure-blob" } })
+
+  -- S1c: the fleet's layout vocabulary, declared and pinned.
+  p6m.standards.layout(g, "full")
 end)
 
 -- CI parity (S10): the rendered project's own build workflow path on a fresh clone, in the
